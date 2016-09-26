@@ -1,2 +1,2 @@
-# WebCalc
-A calculator for the web.
+# webdev-starter
+A static webpage starter with typescript and scss

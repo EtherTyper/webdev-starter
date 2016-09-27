@@ -11,7 +11,7 @@
     "gulp-cli": "^1.2.2",
     "gulp-connect": "^4.0.0",
     "gulp-copy": "0.0.2",
-    "gulp-imagemin": "^3.0.3"
+    "gulp-imagemin": "^3.0.3",
     "gulp-plumber": "^1.1.0",
     "gulp-sass": "^2.3.2",
     "gulp-sourcemaps": "^1.6.0",

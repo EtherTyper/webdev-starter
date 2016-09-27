@@ -13,6 +13,7 @@ let gulp = require('gulp'),
     typescript = require('rollup-plugin-typescript'),
     babel = require('rollup-plugin-babel'),
     fs = require('fs'),
+    imagemin = require('gulp-imagemin'),
     rollup = require('rollup').rollup,
     rCache;
 
@@ -58,7 +59,7 @@ gulp.task('js', () => {
 });
 
 gulp.task('css', (done) => {
-    gulp.src(['src/css/**/*.scss'])
+    return gulp.src(['src/css/**/*.scss'])
         .pipe(plumber())
         .pipe(cache('css'))
         .pipe(sourcemaps.init())
@@ -66,7 +67,6 @@ gulp.task('css', (done) => {
         .pipe(plumber.stop())
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('./dist/css'));
-    done();
 });
 
 gulp.task('unused', (done) => {
@@ -82,22 +82,28 @@ gulp.task('unused', (done) => {
     done();
 });
 
-gulp.task('copy', (done) => {
-    gulp.src(['src/**/*', '!src/css/**/*.scss', '!src/js/**/*.ts'])
+gulp.task('copy', () => {
+    return gulp.src(['src/**/*', '!src/css/**/*.scss', '!src/js/**/*.ts'])
         .pipe(plumber())
         .pipe(copy('dist', {prefix: 1}))
         .pipe(plumber.stop());
-    done();
 });
 
-gulp.task('process', gulp.parallel('unused', 'copy', 'js', 'css'));
+gulp.task('image', () => {
+    return gulp.src(['src/img/**/*'])
+        .pipe(plumber())
+        .pipe(imagemin())
+        .gulp(plumber.stop())
+        .pipe(gulp.dest('dist/img'));
+});
 
-gulp.task('reload', (done) => {
-    gulp.src('dist/**/*')
+
+
+gulp.task('reload', () => {
+    return gulp.src(['dist/**/*'])
         .pipe(plumber())
         .pipe(connect.reload())
         .pipe(plumber.stop());
-    done();
 });
 
 gulp.task('server', () => {
@@ -107,14 +113,20 @@ gulp.task('server', () => {
     });
 });
 
-gulp.task('clean', () => {
-   return del(['dist/**']).catch(() => {});
-});
-
 gulp.task('watch', () => {
     gulp.watch('src/**/*', gulp.series('process', 'reload'));
 });
 
+
+
 gulp.task('launch', gulp.parallel('server', 'watch'));
+
+gulp.task('process', gulp.parallel('unused', 'image',  'copy', 'js', 'css'));
+
+gulp.task('clean', () => {
+   return del(['dist/**']).catch(() => {});
+});
+
+
 
 gulp.task('default', gulp.series('clean', 'process', 'launch'));
